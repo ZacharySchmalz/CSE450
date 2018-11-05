@@ -1,3 +1,5 @@
 **** POTENTIAL IMPROVEMENTS TO BELLMAN-FORD ****
 
-1. Early termination condition: If the main loop of the algorithm terminates without making changes, the algorithm can be terminated immediately because no more changes will be made. Helps in average, but not worst, case (Wikipedia)
+1. Early termination condition: If the main loop of the algorithm terminates
+without making changes, the algorithm can be terminated immediately because
+no more changes will be made. Helps in average, but not worst, case (Wikipedia)
