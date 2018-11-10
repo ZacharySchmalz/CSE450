@@ -1,5 +1,19 @@
 **** POTENTIAL IMPROVEMENTS TO BELLMAN-FORD ****
 
-1. Early termination condition: If the main loop of the algorithm terminates
-without making changes, the algorithm can be terminated immediately because
-no more changes will be made. Helps in average, but not worst, case (Wikipedia)
+https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm#Improvements
+
+1. [DONE] Early termination condition: If the main loop of the algorithm 
+terminates without making changes, the algorithm can be terminated immediately 
+because no more changes will be made. Helps in average, but not worst, 
+case (Wikipedia)
+
+2. Yen's first improvement: early termination. If any vertex v has a distance
+value that has not change since the last time the edges out of v were relaxed, 
+that edge does not need to be relaxed anymore. Helps in average, but not worst, 
+case for dense graphs (Wikipedia)
+
+3. Yen's second improvement
+
+4. Bannister & Eppstein
+
+5. SPFA (Chinese algorithm, adds FIFO to Bellman ford)
