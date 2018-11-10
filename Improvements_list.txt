@@ -12,8 +12,8 @@ value that has not change since the last time the edges out of v were relaxed,
 that edge does not need to be relaxed anymore. Helps in average, but not worst, 
 case for dense graphs (Wikipedia)
 
-3. Yen's second improvement
+3. Yen's second improvement (Wikipedia)
 
-4. Bannister & Eppstein
+4. Bannister & Eppstein (Wikipedia)
 
-5. SPFA (Chinese algorithm, adds FIFO to Bellman ford)
+5. SPFA (Chinese algorithm, adds FIFO to Bellman ford) (Wikipedia)
