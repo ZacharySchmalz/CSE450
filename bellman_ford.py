@@ -1,3 +1,4 @@
+import random
 import time
 import csv
 import sys
@@ -10,13 +11,13 @@ import sys
 
 # Grab the filename from the first command argument
 FILENAME = str(sys.argv[1])
-# Set the delimiter for the file (graph.csv and other generated graphs will use commas)
-DELIMITER = ','
+
+random.seed()
 
 # Class definition for a graph
 class Graph :
     # Initialzies the graph, reading in edges and vertices from filename using the specified delimiter
-    def __init__(self, filename, delim) :
+    def __init__(self, filename) :
         # Time graph creation 
         start = time.time()
     
@@ -26,7 +27,7 @@ class Graph :
         self.edges = []
         
         # Load vertices and edges into graph from filename
-        self.createGraph(filename, delim)
+        self.createGraph(filename)
 
         # Print graph creation time, vertex count and edge count
         print('\nGraph Created: ', time.time() - start)
@@ -44,8 +45,16 @@ class Graph :
             self.vertices[vertex] = len(self.vertices)
 
     # Open dataset-containing file and read data
-    def createGraph(self, filename, delim) :
-        with open(filename) as file :
+    def createGraph(self, filename) :
+        # Detect the row delimiter
+        delim = ''
+        with open(filename + '.csv') as file :
+            line = file.readline()
+            for char in line :
+                if not char.isdigit() :
+                    delim = char
+                    file.seek(0)
+                    break
             reader = csv.reader(file, delimiter = delim)
             for row in reader :
                 # Add source vertex
@@ -53,7 +62,10 @@ class Graph :
                 # Add destination vertex
                 self.addVertex(int(row[1]))
                 # Add the [Source, Destination, Weight] edge
-                self.addEdge(int(row[0]), int(row[1]), int(row[2]))
+                if len(row) == 2 :
+                    self.addEdge(int(row[0]), int(row[1]), random.randint(-10,10))
+                elif len(row) >= 3 :
+                    self.addEdge(int(row[0]), int(row[1]), int(row[2]))
 
 # Function for performing the BellmanFord algorithm on a graph from a particular source vertex
 def BellmanFord(graph, source) :
@@ -75,13 +87,13 @@ def BellmanFord(graph, source) :
     predecessor = {}
     
     # Initialize distances to Infinity and predecessors to None
-    for i in range(len(vertices)) :
-        distance[i] = float('Inf')
-        predecessor[i] = None
-    
+    for key in vertices.keys() :
+        distance[key] = float('Inf')
+        predecessor[key] = None
+
     # Distance to source node is 0
     distance[source] = 0
-    
+
     # Step 2: Relax all edges |Vertices| - 1 times
     for i in range(len(vertices) - 1) :
         # Print current vertex progress
@@ -117,29 +129,41 @@ def BellmanFord(graph, source) :
     
 # Print the paths and distance from source vertex to all other vertices
 def PrintPaths(distance, vertices, predecessor, source) :
+    file = open(FILENAME + '_paths.txt', 'w')
     print('|\tTo\t|\tWeight\t|\tPath\n|\t\t|\t\t|\t')
-    for i in range(0, len(vertices)) :
-        path = [i]
-        pred = predecessor[i]
-        while pred != None:
-            path += [pred]
-            pred = predecessor[pred]
+    file.write('|\tTo\t|\tWeight\t|\tPath\n|\t\t|\t\t|\t\n')
+    for key in sorted(vertices.keys()) :
+        path = [key]
+        node = predecessor[key]
+        while node != None:
+            path += [node]
+            node = predecessor[node]
         path.reverse()
         
+        line_to_print = ''
+        
         # No path exists from source vertices to vertex i
-        if distance[i] == float('Inf'):
-            print('|\t', i, '\t|\t', distance[i], '\t|\t', '[No path exists]', sep='')
-            
+        if distance[key] == float('Inf'):
+            line_to_print = ('|\t' + str(key) + '\t|\t' + str(distance[key]) + '\t|\t' + '[No path exists]')
         # Print path and distance
         else :
-            print('|\t', i, '\t|\t', distance[i], '\t|\t', path, sep='')
+            line_to_print = ('|\t' + str(key) + '\t|\t' + str(distance[key]) + '\t|\t' + str(path))
+            
+        print(line_to_print)
+        file.write(line_to_print + '\n')
+        
+    file.close()
 
-# Create graph
-graph = Graph(FILENAME, DELIMITER)
+def main() :
+    # Create graph
+    graph = Graph(FILENAME)
 
-# Run the algorithm on the graph
-result, distance, predecessor = BellmanFord(graph, 0)
+    # Run the algorithm on the graph
+    result, distance, predecessor = BellmanFord(graph, 1)
 
-# Print paths
-if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
-    PrintPaths(distance, graph.vertices, predecessor, 0)
+    # Print paths
+    if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
+        PrintPaths(distance, graph.vertices, predecessor, 1)
+        
+if __name__ == "__main__" :
+    main()
