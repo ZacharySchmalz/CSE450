@@ -16,72 +16,44 @@ def BellmanFord(graph, source) :
         predecessor[key] = None
 
     distance[source] = 0
-
-    edgesF = []
-    edgesB = []
-    
-    for edge in edges :
-        if edge[0] < edge[1] :
-            edgesF.append(edge)
-        else :
-            edgesB.append(edge)
     
     changedVerts = [source]
     container = []
     
     while len(changedVerts) > 0 :
-
         index = 0
-        # Step 2A: Relax all edges in edgesF in ascending sorted order from vertex 1 to |V|
-        for key in sorted(changedVerts) :
+        
+        # Iterate through only changed vertices
+        for key in changedVerts :
             earlyTermination = True
+            
             index += 1
-            sys.stdout.write('\rEdgesF Progress [' + str(index) + '/' + str(int(len(vertices))) + '][' + str(len(edgesF)) + ']')
+            sys.stdout.write('\rProgress [' + str(index) + '/' + str(int(len(vertices))) + ']')
             sys.stdout.flush()
             
             # Iterate through all edges
-            for u,v,w in edgesF :
+            for u,v,w in edges :
                 # If an edge has a cheaper edge weight to destination vertex
                 if distance[u] != float('Inf') and distance[u] + w < distance[v] :
                     # Update distance and predecessor to destination vertex v
                     distance[v] = distance[u] + w
                     predecessor[v] = u
-                    container.append(v)
                     earlyTermination = False
                     
-            if earlyTermination :
-                break
-                        
-        index = 0
-        # Step 2B: Relax all edges in edgesB in descending sorted order from vertex |V| to 1
-        for key in sorted(changedVerts, reverse=True) :
-            index += 1
-            sys.stdout.write('\rEdgesB Progress [' + str(index) + '/' + str(int(len(vertices))) + '][' + str(len(edgesB)) + ']')
-            sys.stdout.flush()
-            
-            # Iterate through all edges
-            for u,v,w in edgesB :                
-                # If an edge has a cheaper edge weight to destination vertex
-                if distance[u] != float('Inf') and distance[u] + w < distance[v] :
-                    # Update distance and predecessor to destination vertex v
-                    distance[v] = distance[u] + w
-                    predecessor[v] = u
-                    container.append(v)
-                    earlyTermination = False
-                        
+                    # Check that the node is not already added
+                    if v not in container :
+                        container.append(v)
+                    
             if earlyTermination :
                 break
             
         changedVerts.clear()
         changedVerts = container.copy()
         container.clear()
-
-    #sys.stdout.write('\rEdgesF Progress [' + str(int(len(vertices))) + '/' + str(int(len(vertices))) + '][' + str(len(edgesF)) + '] - Complete\n')
-    #sys.stdout.flush()  
     
     # Print complete message
-    #sys.stdout.write('\rEdgesB Progress [' + str(int(len(vertices))) + '/' + str(int(len(vertices))) + '][' + str(len(edgesB)) + '] - Complete\n')
-    #sys.stdout.flush()            
+    sys.stdout.write('\rProgress [' + str(int(len(vertices))) + '/' + str(int(len(vertices))) + '] - Complete\n')
+    sys.stdout.flush()            
     
     # Step 3: Check for negative-weight cycle.
     for u,v,w in edges :
@@ -103,11 +75,11 @@ def main() :
     graph = bf.Graph(bf.FILENAME)
 
     # Run the algorithm on the graph
-    result, distance, predecessor = BellmanFord(graph, 1)
+    result, distance, predecessor = BellmanFord(graph, 0)
 
     # Print paths
     if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
-        bf.PrintPaths(distance, graph.vertices, predecessor, 1)
+        bf.PrintPaths(distance, graph.vertices, predecessor, 0)
         
 if __name__ == "__main__" :
     main()

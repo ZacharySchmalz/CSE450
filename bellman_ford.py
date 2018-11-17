@@ -10,7 +10,9 @@ import sys
 # Example command using the graph.csv datset: python bellman_ford.py graph.csv True
 
 # Grab the filename from the first command argument
-FILENAME = str(sys.argv[1])
+FILENAME = None
+if len(sys.argv) > 1 :
+    FILENAME = str(sys.argv[1])
 
 random.seed()
 
@@ -26,8 +28,9 @@ class Graph :
         # Edges are a simple list since we have to access every edge anyways
         self.edges = []
         
-        # Load vertices and edges into graph from filename
-        self.createGraph(filename)
+        # Load vertices and edges into graph from file
+        if filename != None :
+            self.createGraph(filename)
 
         # Print graph creation time, vertex count and edge count
         print('\nGraph Created: ', time.time() - start)
@@ -159,11 +162,11 @@ def main() :
     graph = Graph(FILENAME)
 
     # Run the algorithm on the graph
-    result, distance, predecessor = BellmanFord(graph, 1)
+    result, distance, predecessor = BellmanFord(graph, 0)
 
     # Print paths
     if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
-        PrintPaths(distance, graph.vertices, predecessor, 1)
+        PrintPaths(distance, graph.vertices, predecessor, 0)
         
 if __name__ == "__main__" :
     main()

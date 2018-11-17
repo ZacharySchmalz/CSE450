@@ -38,13 +38,17 @@ def GenerateGraph() :
             dot.edge(str(edge[0]), str(edge[1]))
         dot.render('out.gv', view=True)
         
-    return nodes, edges
+    return edges
     
 def WriteToFile(edges) :
     file = open('graph.csv', 'w')
     for edge in edges :
         file.write(str(edge[0]) + ',' + str(edge[1]) + ',' + str(random.randint(-EDGE_WEIGHTS, EDGE_WEIGHTS)) + '\n')
     file.close()
-    
-nodes, edges = GenerateGraph()
-WriteToFile(edges)
+   
+def main() :
+    edges = GenerateGraph()
+    WriteToFile(edges)
+        
+if __name__ == "__main__" :
+    main()   

@@ -58,11 +58,11 @@ def main() :
     graph = bf.Graph(bf.FILENAME)
 
     # Run the algorithm on the graph
-    result, distance, predecessor = BellmanFord(graph, 1)
+    result, distance, predecessor = BellmanFord(graph, 0)
 
     # Print paths
     if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
-        bf.PrintPaths(distance, graph.vertices, predecessor, 1)
+        bf.PrintPaths(distance, graph.vertices, predecessor, 0)
         
 if __name__ == "__main__" :
     main()
