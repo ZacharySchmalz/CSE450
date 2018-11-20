@@ -20,32 +20,24 @@ def BellmanFord(graph, source) :
     changedVerts = [source]
     container = []
     
-    while len(changedVerts) > 0 :
-        index = 0
+    while len(changedVerts) > 0:
         
         # Iterate through only changed vertices
-        for key in changedVerts :
-            earlyTermination = True
+        for u in changedVerts:
             
-            index += 1
-            sys.stdout.write('\rProgress [' + str(index) + '/' + str(int(len(vertices))) + ']')
-            sys.stdout.flush()
+            # Iterate through all edges out of key
+            edges_out_of_u = [edge for edge in edges if edge[0] == u]
             
-            # Iterate through all edges
-            for u,v,w in edges :
+            for u,v,w in edges_out_of_u:
                 # If an edge has a cheaper edge weight to destination vertex
                 if distance[u] != float('Inf') and distance[u] + w < distance[v] :
                     # Update distance and predecessor to destination vertex v
                     distance[v] = distance[u] + w
                     predecessor[v] = u
-                    earlyTermination = False
                     
                     # Check that the node is not already added
                     if v not in container :
                         container.append(v)
-                    
-            if earlyTermination :
-                break
             
         changedVerts.clear()
         changedVerts = container.copy()
