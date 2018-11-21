@@ -30,7 +30,6 @@ def BellmanFord(graph, source) :
     container = []
     
     while len(changedVerts) > 0 :
-        index = 0
         
         # Step 2A: Relax all edges in edgesF in ascending sorted order from vertex 1 to |V|
         for key in sorted(changedVerts) :
@@ -48,8 +47,7 @@ def BellmanFord(graph, source) :
                     if v not in container :
                         container.append(v)
 
-            
-        index = 0
+        
         # Step 2B: Relax all edges in edgesB in descending sorted order from vertex |V| to 1
         for key in sorted(changedVerts, reverse=True) :
             
