@@ -34,11 +34,8 @@ def BellmanFord(graph, source) :
         
         # Step 2A: Relax all edges in edgesF in ascending sorted order from vertex 1 to |V|
         for key in sorted(changedVerts) :
-            earlyTermination = True
             
-            #index += 1
-            #sys.stdout.write('\rEdgesF Progress [' + str(index) + '/' + str(int(len(vertices))) + '][' + str(len(edgesF)) + ']')
-            #sys.stdout.flush()
+            edges_out_of_u = [edge for edge in edgesF if edge[0] == key]
             
             # Iterate through all edges
             for u,v,w in edgesF :
@@ -47,22 +44,16 @@ def BellmanFord(graph, source) :
                     # Update distance and predecessor to destination vertex v
                     distance[v] = distance[u] + w
                     predecessor[v] = u
-                    earlyTermination = False
+
                     if v not in container :
                         container.append(v)
 
-                    
-            if earlyTermination :
-                break        
             
         index = 0
         # Step 2B: Relax all edges in edgesB in descending sorted order from vertex |V| to 1
         for key in sorted(changedVerts, reverse=True) :
-            earlyTermination = True
             
-            #index += 1
-            #sys.stdout.write('\rEdgesB Progress [' + str(index) + '/' + str(int(len(vertices))) + '][' + str(len(edgesB)) + ']')
-            #sys.stdout.flush()
+            edges_out_of_u = [edge for edge in edgesB if edge[0] == key]
             
             # Iterate through all B edges
             for u,v,w in edgesB :                
@@ -71,12 +62,10 @@ def BellmanFord(graph, source) :
                     # Update distance and predecessor to destination vertex v
                     distance[v] = distance[u] + w
                     predecessor[v] = u
-                    earlyTermination = False
+
                     if v not in container :
                         container.append(v)
-                        
-            if earlyTermination :
-                break
+
             
         changedVerts.clear()
         changedVerts = container.copy()
