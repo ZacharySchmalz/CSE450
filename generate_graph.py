@@ -4,13 +4,13 @@ from graphviz import Digraph
 
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 
-MIN_PER_RANK = 10
-MAX_PER_RANK = 50
-MIN_RANKS = 30
-MAX_RANKS = 50
-PERCENT = 30
+MIN_PER_RANK = 3
+MAX_PER_RANK = 5
+MIN_RANKS = 15
+MAX_RANKS = 25
+PERCENT = 5
 RAND_MAX = 32767
-EDGE_WEIGHTS = 10
+EDGE_WEIGHTS = 15
 RENDER_GRAPH = False
 
 random.seed()
@@ -41,7 +41,7 @@ def GenerateGraph() :
     return edges
     
 def WriteToFile(edges) :
-    file = open('graph.csv', 'w')
+    file = open('graph1.csv', 'w')
     for edge in edges :
         file.write(str(edge[0]) + ',' + str(edge[1]) + ',' + str(random.randint(-EDGE_WEIGHTS, EDGE_WEIGHTS)) + '\n')
     file.close()

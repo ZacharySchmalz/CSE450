@@ -25,45 +25,47 @@ def BellmanFord(graph, source) :
             edgesF.append(edge)
         else :
             edgesB.append(edge)
-    
+
     changedVerts = [source]
     container = []
     
     while len(changedVerts) > 0 :
         
         # Step 2A: Relax all edges in edgesF in ascending sorted order from vertex 1 to |V|
-        for key in sorted(changedVerts) :
+        for key in vertices.keys() :
+        
+            if key in changedVerts :
             
-            edges_out_of_u = [edge for edge in edgesF if edge[0] == key]
-            
-            # Iterate through all edges
-            for u,v,w in edgesF :
-                # If an edge has a cheaper edge weight to destination vertex
-                if distance[u] != float('Inf') and distance[u] + w < distance[v] :
-                    # Update distance and predecessor to destination vertex v
-                    distance[v] = distance[u] + w
-                    predecessor[v] = u
+                # Iterate through all F edges
+                for u,v,w in edgesF :
+                
+                    # If an edge has a cheaper edge weight to destination vertex
+                    if u == key and distance[u] != float('Inf') and distance[u] + w < distance[v] :
+                        
+                        # Update distance and predecessor to destination vertex v
+                        distance[v] = distance[u] + w
+                        predecessor[v] = u
 
-                    if v not in container :
-                        container.append(v)
-
+                        if v not in container :
+                            container.append(v)
         
         # Step 2B: Relax all edges in edgesB in descending sorted order from vertex |V| to 1
-        for key in sorted(changedVerts, reverse=True) :
+        for key in reversed(list(vertices.keys())) :
+        
+            if key in changedVerts :
             
-            edges_out_of_u = [edge for edge in edgesB if edge[0] == key]
-            
-            # Iterate through all B edges
-            for u,v,w in edgesB :                
-                # If an edge has a cheaper edge weight to destination vertex
-                if distance[u] != float('Inf') and distance[u] + w < distance[v] :
-                    # Update distance and predecessor to destination vertex v
-                    distance[v] = distance[u] + w
-                    predecessor[v] = u
+                # Iterate through all B edges
+                for u,v,w in edgesB :    
+                
+                    # If an edge has a cheaper edge weight to destination vertex
+                    if u == key and distance[u] != float('Inf') and distance[u] + w < distance[v] :
+                    
+                        # Update distance and predecessor to destination vertex v
+                        distance[v] = distance[u] + w
+                        predecessor[v] = u
 
-                    if v not in container :
-                        container.append(v)
-
+                        if v not in container :
+                            container.append(v)
             
         changedVerts.clear()
         changedVerts = container.copy()

@@ -21,16 +21,16 @@ def BellmanFord(graph, source) :
     container = []
     
     while len(changedVerts) > 0:
-        
+
         # Iterate through only changed vertices
-        for u in changedVerts:
+        for key in changedVerts:
             
-            # Iterate through all edges out of key
-            edges_out_of_u = [edge for edge in edges if edge[0] == u]
+            # Iterate through all edges out of key            
+            for u,v,w in edges:
             
-            for u,v,w in edges_out_of_u:
                 # If an edge has a cheaper edge weight to destination vertex
-                if distance[u] != float('Inf') and distance[u] + w < distance[v] :
+                if u == key and distance[u] != float('Inf') and distance[u] + w < distance[v] :
+                
                     # Update distance and predecessor to destination vertex v
                     distance[v] = distance[u] + w
                     predecessor[v] = u
@@ -38,7 +38,7 @@ def BellmanFord(graph, source) :
                     # Check that the node is not already added
                     if v not in container :
                         container.append(v)
-            
+
         changedVerts.clear()
         changedVerts = container.copy()
         container.clear()
@@ -50,7 +50,7 @@ def BellmanFord(graph, source) :
     # Step 3: Check for negative-weight cycle.
     for u,v,w in edges :
         # If a shorter path is found, graph contains a negative-weight cycle
-        if distance[u] + w < distance[v] :
+        if distance[u] != float('Inf') and distance[u] + w < distance[v] :
             print('\nGraph contains a negative-weight cycle\n\n')
             
             # Return distances, predecessors, and False signaling graph contains negative-weight cycle
