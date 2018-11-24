@@ -4,13 +4,13 @@ from graphviz import Digraph
 
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 
-MIN_PER_RANK = 3
-MAX_PER_RANK = 5
+MIN_PER_RANK = 15
+MAX_PER_RANK = 25
 MIN_RANKS = 15
 MAX_RANKS = 25
-PERCENT = 5
+PERCENT = 75
 RAND_MAX = 32767
-EDGE_WEIGHTS = 15
+EDGE_WEIGHTS = 10
 RENDER_GRAPH = False
 
 random.seed()

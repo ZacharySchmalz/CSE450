@@ -6,15 +6,13 @@ import sys
 def BellmanFord(graph, source) :
     random.seed()
 
-    start = time.time()
-
-    vertices = graph.vertices
+    vertices = list(graph.vertices).copy()
     edges = graph.edges
     
     distance = {}
     predecessor = {}
     
-    for key in vertices.keys() :
+    for key in vertices :
         distance[key] = float('Inf')
         predecessor[key] = None
 
@@ -22,7 +20,6 @@ def BellmanFord(graph, source) :
 
     edgesF = []
     edgesB = []
-    
     for edge in edges :
         if edge[0] < edge[1] :
             edgesF.append(edge)
@@ -32,79 +29,78 @@ def BellmanFord(graph, source) :
     changedVerts = [source]
     container = []
     
-    # Create a copy of the vertices
-    verticesR = list(vertices.keys())[::]
+    # Shuffle the vertices and insert source node at beginning
+    random.shuffle(vertices)
+    vertices.remove(source)
+    vertices.insert(0, source)
     
-    # Shuffle the list
-    random.shuffle(verticesR)
-    
-    # Move teh source node to the beginning
-    index = verticesR.index(source)
-    verticesR[0], verticesR[index] = verticesR[index], verticesR[0]
+    iterations = 0
+    edgesProcessed = 0
+    verticesUpdated = 0
     
     while len(changedVerts) > 0 :
         
-        # Step 2A: Relax all edges in edgesF in ascending sorted order from vertex 1 to |V|
-        for key in verticesR :
-            if key in changedVerts :
-            
+        # Iterate through all vertices
+        for vertex in vertices :
+        
+            if vertex in changedVerts :
+                iterations += 1
+                sys.stdout.write('\r\tIterations: [' + str(iterations) + ']')
+                sys.stdout.flush()
+                    
                 # Iterate through all F edges
                 for u,v,w in edgesF :
+                    edgesProcessed += 1
                 
-                    # If an edge has a cheaper edge weight to destination vertex
-                    if u == key and distance[u] != float('Inf') and distance[u] + w < distance[v] :
-                        
-                        # Update distance and predecessor to destination vertex v
+                    if u == vertex and distance[u] != float('Inf') and distance[u] + w < distance[v] : 
                         distance[v] = distance[u] + w
                         predecessor[v] = u
+                        verticesUpdated += 1
 
                         if v not in container :
                             container.append(v)
         
-        # Step 2B: Relax all edges in edgesB in descending sorted order from vertex |V| to 1
-        for key in reversed(verticesR) :
-            if key in changedVerts :
+        # Iterate through reversed vertices
+        for vertex in reversed(vertices) :
+        
+            if vertex in changedVerts :
+                iterations += 1
+                sys.stdout.write('\r\tIterations: [' + str(iterations) + ']')
+                sys.stdout.flush()
             
                 # Iterate through all B edges
                 for u,v,w in edgesB :    
-                
-                    # If an edge has a cheaper edge weight to destination vertex
-                    if u == key and distance[u] != float('Inf') and distance[u] + w < distance[v] :
+                    edgesProcessed += 1
                     
-                        # Update distance and predecessor to destination vertex v
+                    if u == vertex and distance[u] != float('Inf') and distance[u] + w < distance[v] : 
                         distance[v] = distance[u] + w
                         predecessor[v] = u
+                        verticesUpdated += 1
 
                         if v not in container :
                             container.append(v)
             
         changedVerts.clear()
         changedVerts = container.copy()
-        container.clear()            
+        container.clear()         
     
-    # Step 3: Check for negative-weight cycle.
     for u,v,w in edges :
-        # If a shorter path is found, graph contains a negative-weight cycle
         if distance[u] + w < distance[v] :
-            print('\nGraph contains a negative-weight cycle\n\n')
+            sys.stdout.write('\r\tBellman-Ford (Random) - Graph contains a negative-weight cycle\n')
+            sys.stdout.flush()
             
-            # Return distances, predecessors, and False signaling graph contains negative-weight cycle
-            return False, distance, predecessor
+            return False, distance, predecessor, iterations, edgesProcessed, verticesUpdated
     
-    # Print algorithm running time
-    print('\nBellmanFord [Vertices: ', len(vertices), '][Edges: ', len(edges), '] in ', time.time() - start, '\n', sep='')
+    sys.stdout.write('\r\tBellman-Ford (Random) - Complete\n')
+    sys.stdout.flush()
     
-    # Graph does not contain a negative weight cycle
-    return True, distance, predecessor
+    return True, distance, predecessor, iterations, edgesProcessed, verticesUpdated
 
 def main() :
-    # Create graph
     graph = bf.Graph(bf.FILENAME)
 
-    # Run the algorithm on the graph
-    result, distance, predecessor = BellmanFord(graph, 1)
+    result, distance, predecessor, _, _, _ = BellmanFord(graph, 0)
 
-    # Print paths
     if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
         bf.PrintPaths(distance, graph.vertices, predecessor, 0)
         

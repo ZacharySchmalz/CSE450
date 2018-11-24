@@ -14,7 +14,7 @@ FILENAME = None
 if len(sys.argv) > 1 :
     FILENAME = str(sys.argv[1])
 
-random.seed()
+random.seed(1)
 
 # Class definition for a graph
 class Graph :
@@ -72,9 +72,6 @@ class Graph :
 
 # Function for performing the BellmanFord algorithm on a graph from a particular source vertex
 def BellmanFord(graph, source) :
-    # Time the algorithm
-    start = time.time()
-
     # Get vertices and edges
     vertices = graph.vertices
     edges = graph.edges
@@ -97,38 +94,43 @@ def BellmanFord(graph, source) :
     # Distance to source node is 0
     distance[source] = 0
 
+    # Stats
+    iterations = 0
+    edgesProcessed = 0
+    verticesUpdated = 0
+    
     # Step 2: Relax all edges |Vertices| - 1 times
-    for i in range(len(vertices) - 1) :
-        # Print current vertex progress
-        sys.stdout.write('\rProgress [' + str(int(i+1)) + '/' + str(int(len(vertices))) + ']')
+    for _ in range(len(vertices) - 1) :
+        # Print current iteration count
+        iterations += 1
+        sys.stdout.write('\r\tIterations: [' + str(iterations) + ']')
         sys.stdout.flush()
         
         # Iterate through all edges
         for u,v,w in edges :
+            edgesProcessed += 1
             # If an edge has a cheaper edge weight to destination vertex
             if distance[u] != float('Inf') and distance[u] + w < distance[v] :
                 # Update distance and predecessor to destination vertex v
                 distance[v] = distance[u] + w
                 predecessor[v] = u
-
-    # Print complete message
-    sys.stdout.write('\rProgress [' + str(int(len(vertices))) + '/' + str(int(len(vertices))) + '] - Complete')
-    sys.stdout.flush()            
+                verticesUpdated += 1          
     
     # Step 3: Check for negative-weight cycle.
     for u,v,w in edges :
         # If a shorter path is found, graph contains a negative-weight cycle
         if distance[u] + w < distance[v] :
-            print('\n\nGraph contains a negative-weight cycle\n\n')
+            sys.stdout.write('\r\tBellman-Ford (Original) - Graph contains a negative-weight cycle\n')
+            sys.stdout.flush()
             
             # Return distances, predecessors, and False signaling graph contains negative-weight cycle
-            return False, distance, predecessor
+            return False, distance, predecessor, iterations, edgesProcessed, verticesUpdated
     
-    # Print algorithm running time
-    print('\n\nBellmanFord [Vertices: ', len(vertices), '][Edges: ', len(edges), '] in ', time.time() - start, '\n', sep='')
+    sys.stdout.write('\r\tBellman-Ford (Original) - Complete\n')
+    sys.stdout.flush()
     
     # Graph does not contain a negative weight cycle
-    return True, distance, predecessor
+    return True, distance, predecessor, iterations, edgesProcessed, verticesUpdated
     
 # Print the paths and distance from source vertex to all other vertices
 def PrintPaths(distance, vertices, predecessor, source) :
@@ -147,12 +149,12 @@ def PrintPaths(distance, vertices, predecessor, source) :
         
         # No path exists from source vertices to vertex i
         if distance[key] == float('Inf'):
-            line_to_print = ('|\t' + str(key) + '\t|\t' + str(distance[key]) + '\t|\t' + '[No path exists]')
+            continue#line_to_print = ('|\t' + str(key) + '\t|\t' + str(distance[key]) + '\t|\t' + '[No path exists]')
         # Print path and distance
         else :
             line_to_print = ('|\t' + str(key) + '\t|\t' + str(distance[key]) + '\t|\t' + str(path))
             
-        print(line_to_print)
+        #print(line_to_print)
         file.write(line_to_print + '\n')
         
     file.close()
@@ -162,7 +164,7 @@ def main() :
     graph = Graph(FILENAME)
 
     # Run the algorithm on the graph
-    result, distance, predecessor = BellmanFord(graph, 0)
+    result, distance, predecessor, _, _, _ = BellmanFord(graph, 0)
 
     # Print paths
     if result and len(sys.argv) > 2 and str(sys.argv[2]) == 'True':
